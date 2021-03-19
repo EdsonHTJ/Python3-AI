@@ -41,7 +41,7 @@ evaluateDataSet["Pesos Iniciais"] = list(a.initW) + [0 for i in range(len(result
 evaluateDataSet["Pesos Finais"] = list(a.W) + [0 for i in range(len(results)-len(a.W))]
 evaluateDataSet["Theta Inicial"] = [float(a.initTheta)] + [0 for i in range(len(results)-1)]
 evaluateDataSet["Theta Final"] = [float(a.theta)] + [0 for i in range(len(results)-1)]
-
+evaluateDataSet["Epocas"] =[float(a.epochs)] + [0 for i in range(len(results)-1)]
 plt.plot(range(len(a.eqms)), a.eqms, "b-")
 i = 1
 pltPath = f"./plot{i}.png"

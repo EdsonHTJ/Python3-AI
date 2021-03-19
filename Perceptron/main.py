@@ -40,6 +40,7 @@ evaluateDataSet["Pesos Iniciais"] = list(p.initW) + [0 for i in range(len(result
 evaluateDataSet["Pesos Finais"] = list(p.W) + [0 for i in range(len(results)-len(p.W))]
 evaluateDataSet["Theta Inicial"] = [float(p.initTheta)] + [0 for i in range(len(results)-1)]
 evaluateDataSet["Theta Final"] = [float(p.theta)] + [0 for i in range(len(results)-1)]
+evaluateDataSet["Epocas"] = [float(p.epochs)] + [0 for i in range(len(results)-1)]
 
 
 
