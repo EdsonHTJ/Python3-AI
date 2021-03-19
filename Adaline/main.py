@@ -44,20 +44,20 @@ evaluateDataSet["Theta Final"] = [float(a.theta)] + [0 for i in range(len(result
 evaluateDataSet["Epocas"] =[float(a.epochs)] + [0 for i in range(len(results)-1)]
 plt.plot(range(len(a.eqms)), a.eqms, "b-")
 i = 1
-pltPath = f"./plot{i}.png"
+pltPath = f"./results/plot{i}.png"
 while os.path.exists(pltPath):
     i+=1
-    pltPath = f"./plot{i}.png"
+    pltPath = f"./results/plot{i}.png"
 
 
 plt.savefig(pltPath)
 
 i = 1
-csvPath = f"./Resultado{i}.csv"
+csvPath = f"./results/Resultado{i}.csv"
 
 while os.path.exists(csvPath):
     i+=1
-    csvPath = f"./Resultado{i}.csv"
+    csvPath = f"./results/Resultado{i}.csv"
 
 evaluateDataSet.to_csv(csvPath)
 

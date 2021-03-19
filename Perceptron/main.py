@@ -45,11 +45,11 @@ evaluateDataSet["Epocas"] = [float(p.epochs)] + [0 for i in range(len(results)-1
 
 
 i = 1
-csvPath = f"./Resultado{i}.csv"
+csvPath = f"./results/Resultado{i}.csv"
 
 while os.path.exists(csvPath):
     i+=1
-    csvPath = f"./Resultado{i}.csv"
+    csvPath = f"./results/Resultado{i}.csv"
 
 evaluateDataSet.to_csv(csvPath)
 
