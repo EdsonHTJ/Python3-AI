@@ -42,7 +42,15 @@ evaluateDataSet["Pesos Finais"] = list(a.W) + [0 for i in range(len(results)-len
 evaluateDataSet["Theta Inicial"] = [float(a.initTheta)] + [0 for i in range(len(results)-1)]
 evaluateDataSet["Theta Final"] = [float(a.theta)] + [0 for i in range(len(results)-1)]
 
+plt.plot(range(len(a.eqms)), a.eqms, "b-")
+i = 1
+pltPath = f"./plot{i}.png"
+while os.path.exists(pltPath):
+    i+=1
+    pltPath = f"./plot{i}.png"
 
+
+plt.savefig(pltPath)
 
 i = 1
 csvPath = f"./Resultado{i}.csv"

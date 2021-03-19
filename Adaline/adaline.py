@@ -17,6 +17,7 @@ class Adaline:
         self.theta = np.random.rand(1)[0]
         self.initTheta= self.theta
         self.epochs = 0
+        self.eqms = [];
         
         if self.activation_function == SignFunction:
             
@@ -32,6 +33,7 @@ class Adaline:
         for x, d in zip(self.input_values, self.output_values):
             u = np.dot(np.transpose(x), self.W) - self.theta
             eqm += (d-u)**2
+        
         
         return eqm / len(self.output_values)
         
@@ -58,6 +60,7 @@ class Adaline:
                   
             
             actual_eqm = self.eqm()
+            self.eqms.append(actual_eqm)
             
             if abs(actual_eqm-last_eqm)<self.precision:
                 break
