@@ -12,8 +12,8 @@ def removeComma(St):
     
 
 #dataset = pd.read_csv('datasets/dataset-treinamento.csv')
-dataset = pd.read_csv('datasets/dataset-treinamento.csv',delimiter=";")
-dataset = dataset.applymap(removeComma)
+dataset = pd.read_csv('datasets/dataset-treinamento.csv',delimiter=",")
+#dataset = dataset.applymap(removeComma)
 print(dataset)
 X = dataset.iloc[:,0:-1].values
 d = dataset.iloc[:,-1:].values
@@ -26,8 +26,8 @@ a.train()
 
 
 #evaluateDataSet = X
-evaluateDataSet = pd.read_csv('datasets/dataset-teste.csv',delimiter=";")
-evaluateDataSet = evaluateDataSet.applymap(removeComma)
+evaluateDataSet = pd.read_csv('datasets/dataset-teste.csv',delimiter=",")
+#evaluateDataSet = evaluateDataSet.applymap(removeComma)
 
 results = []
 
