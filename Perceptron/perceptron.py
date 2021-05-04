@@ -1,80 +1,124 @@
 import numpy as np
 
-from activation_function import BinaryStep
-from activation_function import SignFunction
+from activation_function import sigmoid
+from activation_function import sigmoid_derivative
 
 class Perceptron:
     
-    def __init__(self, input_values, output_values, learning_rate = 1e-3, activation_function = SignFunction ):
-        self.input_values = input_values
-        self.output_values = output_values
-        self.learning_rate = learning_rate
-        self.activation_function = activation_function
-        self.W = np.random.rand(len(input_values[0]))
-        self.initW = self.W
-        self.theta = np.random.rand(1)[0]
-        self.initTheta = self.theta
-        self.epochs = 0
+    def __init__(self,input_values,output_values,layers,learning_rate=1e-2,
+                 precision=1e-6,activation_function=sigmoid,derivative_function=sigmoid_derivative,post_processing=None):
+
+
+       ones_column = np.ones((len(input_values), 1)) * -1
+       self.input_values = np.append(ones_column, input_values, axis=1)
+       
+       self.output_values = output_values
+       self.learning_rate = learning_rate
+       self.precision = precision
+       self.activation_function = activation_function
+       self.derivative_function = derivative_function
+       self.post_processing = post_processing
+
+       self.I = []
+       self.Y = []
+       self.W = []
+
+       n_input = self.input_values.shape[1]
+
+       for i in range(len(layers)):
+            self.W.append(np.random.rand(layers[i], n_input))
+            self.I.append(np.zeros(layers[i]))
+            self.Y.append(np.zeros(layers[i]))
+            n_input = layers[i] + 1
+    
+      
+       self.epochs = 0
+       self.eqms = []
+
+
+    def evaluate(self,x):
+
+
+        y = self.full_propagation(np.append(-1,x))
         
         
-        if self.activation_function == SignFunction:
-            
-            for i in range(len(self.output_values)):
-                
-                if self.output_values[i] != 1 :
-                    self.output_values[i]=-1
-                    
-        elif self.activation_function == BinaryStep:
-            
-            for i in range(len(self.output_values)):
-                
-                if self.output_values[i] != 1 :
-                    self.output_values[i]=0
-            
-            
-        
+        if(self.post_processing != None):
+            y = self.post_processing(y)
+
+
+        return y
+
+               
     def train(self):
+
         error = True
-        print("Pesos Iniciais: ")
-        print("Theta:"+str(self.theta))
-        print("W:"+str(self.W))
+        eqm_actual = self.eqm()
         
         while error:
-                self.epochs +=1
-              #  print(f"Epoca {self.epochs}")
-                error = False
-                for x, d in zip(self.input_values, self.output_values):
-                    u = np.dot(np.transpose(x), self.W) - self.theta
-                    y = self.activation_function.g(u)
-                    
-                    if y != d:
-                        
-                        #print(f"Valor encontrado: {y} , esperado: {d}")
-                        #print(f"Erro: {d-y}")
-                        #print(f"W: {self.W}")
-                        #print(f"Theta: {self.theta}")
-                        #print(f"--Ajuste--")
-                        self.theta = self.theta + self.learning_rate * (d - y) * -1
-                        self.W = self.W + self.learning_rate * (d - y) * x
-                        error =True
-                        #print(f"W: {self.W}")
-                        #print(f"Theta: {self.theta}")
-                        
-                        break
-                    else:
-                        ...
-                        #print(f"Valor encontrado {y}, esperado {d}")
-                        #print("OK")
-                        
-                        
-                #print("======================================")
+            error = False
+            eqm_previous = eqm_actual
+            for x, d in zip(self.input_values,self.output_values):
+
+                self.Y[-1] = self.full_propagation(x)
+                self.back_full(x,d)
                 
-        print("Pesos Finais:")
-        print("Theta:"+str(self.theta))
-        print("W:"+str(self.W))
-        print("Ultima Epoca:"+str(self.epochs))
+            eqm_actual = self.eqm()
+            self.eqms.append(eqm_actual)
+            self.epochs+=1
+            if abs(eqm_actual-eqm_previous)>self.precision:
+                error=True
+
+        print(self.epochs)
+        return self.eqms 
+
+
+    def full_propagation(self,x):
+        Y=x.copy()
+        
+        for i,w in enumerate(self.W):
+                
+            self.I[i] = np.dot(w, Y)
+            Y    = self.activation_function(self.I[i])
             
+            if i <len(self.W)-1:
+                Y = np.append(-1,Y)
+            self.Y[i]=Y
             
-    def evaluate(self,input_value):
-            u = np.dot(np.transpose(input_value), self.W) - self.theta
-            return self.activation_function.g(u)
+        return self.Y[i]
+        
+
+    def back_layer(self,w,w_old,y,d,u,x,out):
+        if not out:
+            y= y[1:]
+            delta=sum(d*w_old)[1:]*self.derivative_function(u)
+            delta=delta.reshape(len(delta),1)
+        else:
+            delta=((d-y)*self.derivative_function(u))
+            delta=delta.reshape(len(delta),1)
+            
+        w += self.learning_rate*delta*x
+
+        return w,delta
+
+
+    def back_full(self,X,d):
+        out=True
+        w_old= 0
+        for i,w in reversed(list(enumerate(self.W))):
+            x=self.Y[i-1]
+            if i == 0:
+                x=X
+            w,d = self.back_layer(w,w_old,self.Y[i],d,self.I[i],x,out)
+            out=False
+            w_old = self.W[i]
+
+
+
+    def eqm(self):
+        eq = 0
+        
+        for x, d in zip(self.input_values, self.output_values):
+            Y = self.full_propagation(x)
+            eq += 0.5 * sum((d - Y) ** 2)
+            
+        return eq/len(self.output_values)
