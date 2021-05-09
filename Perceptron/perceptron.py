@@ -94,8 +94,6 @@ class MLPerceptron:
 
     def back_propagation(self, x_input, d):
 
-        cnt = 0
-
         for i in reversed(range(len(self.W))):
 
             if i == 0:
@@ -106,8 +104,11 @@ class MLPerceptron:
             y_aux = self.Y[i]
 
             if i == len(self.W) - 1:
+                #delta da camada de saida
                 delta = ((d-y_aux)*self.dG(self.I[i]))
             else:
+                # delta das demais camadas
+                # dn-1 = (somatorio(k=1,n3) de (Dk * Wkj)) * g'(Ij) 
                 delta = sum(d*self.W[i+1])[1:]*self.dG(self.I[i])
 
             # realiza a transposta do delta
@@ -116,9 +117,7 @@ class MLPerceptron:
             # ajusta os pesos
             self.W[i] += self.learning_rate*delta*x
 
-            # faz com que dn = delta(n+1)
             d = delta
-            cnt += 1
 
     def eqm(self):
         
