@@ -17,9 +17,9 @@ umidade['seco']  = fuzz.trimf(umidade.universe, [0,   0,  50])
 umidade['bom']   = fuzz.trimf(umidade.universe, [0,  50, 100])
 umidade['umido'] = fuzz.trimf(umidade.universe, [50,100, 100])
 
-variacao['esfriar']   = fuzz.trimf(variacao.universe, [-15, -15,  0])
-variacao['manter']    = fuzz.trimf(variacao.universe, [-5,   0,   5])
-variacao['esquentar'] = fuzz.trimf(variacao.universe, [  0,  15, 15])
+variacao['esfriar']   = fuzz.trapmf(variacao.universe, [-15, -15, -10 ,  0])
+variacao['manter']    = fuzz.trimf(variacao.universe,  [-5,   0,   5])
+variacao['esquentar'] = fuzz.trapmf(variacao.universe, [  0, 10, 15, 15])
 
 temperatura.view()
 umidade.view()
@@ -34,7 +34,7 @@ rule5 = control.Rule((temperatura['muito_quente']),  variacao['esfriar'])
 var_control = control.ControlSystem([rule1, rule2, rule3, rule4, rule5])
 var         = control.ControlSystemSimulation(var_control)
 
-var.input['temperatura'] = 10
+var.input['temperatura'] = 20
 var.input['umidade'] = 20
 
 var.compute()
