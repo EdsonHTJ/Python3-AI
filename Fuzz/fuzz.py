@@ -34,14 +34,18 @@ rule5 = control.Rule((temperatura['muito_quente']),  variacao['esfriar'])
 var_control = control.ControlSystem([rule1, rule2, rule3, rule4, rule5])
 var         = control.ControlSystemSimulation(var_control)
 
-var.input['temperatura'] = 20
-var.input['umidade'] = 20
+while True:
+    var.input['temperatura'] = int(input("Temperatura: "))
+    var.input['umidade'] = int(input("Umidade: "))
 
-var.compute()
+    var.compute()
 
-print(f"\n A Variação de temperatura sera de  {var.output['variacao']} \n")
+    print(f"\n A Variação de temperatura sera de  {var.output['variacao']} \n")
 
-variacao.view(sim=var)
+    variacao.view(sim=var)
 
-a = input()
+    a = input("Finalizar?(S/N)")
+    if a == "S":
+        break
+    
 

@@ -1,11 +1,5 @@
-import os, sys
-
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
-
-from genetic.geneticos import GeneticAlgoritim
-from genetic.geneticos import Individual
+from geneticos import GeneticAlgoritim
+from geneticos import Individual
 
 from io import StringIO
 import pandas as pd
@@ -23,13 +17,42 @@ df = pd.read_csv(data, sep=",")
 
 
 def calculate_profit(individual):
+
     value  = 0
     weight = 0 
     for i in range(individual.chromosome_size):
+
         value  += individual.chromosome[i] * df["PROFIT"].values[i]
         weight += individual.chromosome[i] * df["WEIGHT"].values[i]
 
     return (value, weight)
+
+
+def item_print(individual):
+
+    output_list = ""
+    print(f"Best solution Is: {individual.chromosome}")
+    output_list += str(individual.chromosome)
+    output_list += "\n\n"
+    for i in range(individual.chromosome_size):
+        if individual.chromosome[i]:
+            item   = individual.chromosome[i] * df["ID"].values[i]
+            value  = individual.chromosome[i] * df["PROFIT"].values[i]
+            weight = individual.chromosome[i] * df["WEIGHT"].values[i]
+            output_list += f"ID: {item}, VALUE: {value}, WEIGHT: {weight}\n"
+
+    value, weight = calculate_profit(population.get_fittest())
+
+    output_list += (f"\n\n\nTotal Profit: {str(value)}\n")
+    output_list += (f"Total Weight: {str(weight)}\n")
+    output_list += (f"Capacity: {str(capacity)}\n")
+
+    print(output_list)
+
+    open("./out_list.txt", "w").write(output_list)
+        
+    
+
 
 
 def fit_func(individual):
@@ -46,7 +69,7 @@ if __name__ == '__main__':
 
 
     generation = 0
-    ga = GeneticAlgoritim(50, 0.05, 0.90, 2, fittnes_calc= fit_func)
+    ga = GeneticAlgoritim(50, 0.01, 0.97, 3, fittnes_calc= fit_func)
     population = ga.init_population(len(df))
     ga.evaluate_population(population)
 
@@ -57,14 +80,10 @@ if __name__ == '__main__':
         ga.evaluate_population(population)
         generation += 1
 
-    value, weight = calculate_profit(population.get_fittest())
 
    
     print(f"found solution in {generation} generations")
-    print(f"Best solution Is:")
-    print(f"Profit: {str(value)}")
-    print(f"Weight: {str(weight)}")
-    print(f"Capacity: {str(capacity)}")
+    item_print(population.get_fittest())
 
 
 
